@@ -145,6 +145,12 @@ Re_process:
 			Again:
 			us number = std::move(random.Get_Random_Number());
 
+			/*
+   			us number;
+      			number << random;
+   
+   			*/
+			
 			//	if it is duplicated goto again and generate new number
 			if (empty_spot(temp) and (is_duplicated(number, temp.at(row)) or is_duplicated(number, convertor(column, temp)))) {
 
