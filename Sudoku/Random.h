@@ -12,6 +12,12 @@ public:
 	Random(const size_t);
 	[[nodiscard]] unsigned short Get_Random_Number()const;
 
+
+	template <typename Ty> friend Ty& operator<<(Ty& value, const Random& random) {
+		value = random.Get_Random_Number();
+		return value;
+	}
+
 private:
 
 	[[noreturn]] void Error(const char* ) noexcept;
