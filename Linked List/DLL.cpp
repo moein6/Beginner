@@ -57,7 +57,7 @@ public:
 		{
 
 			last->next = std::move(newnode);
-			newnode->prev = std::move(last);
+			newnode->prev = last;
 			last = std::move(newnode);
 		}//	end else
 
