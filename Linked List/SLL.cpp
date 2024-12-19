@@ -102,7 +102,6 @@ public:
 				temp = temp->Next;
 
 			temp->Next = newnode;
-			temp = newnode;
 		}//	end else
 
 		List_size++;
