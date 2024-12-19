@@ -34,28 +34,35 @@ public:
 	}
 
 	void InsertAt(const unsigned short index, const Ty& Data) {
+
+		if(index < 0 or index > List_size)
+			throw std::exception("Out of rang index");
+
+		List_size++;
 		
 		if (index == List_size) {
 			Push_Back(Data);
 			return;
+		}else if (index == 0)
+			push_Front(Data);
+		else{
+			
+			auto temp = First;
+			auto newnode = std::make_shared<Node<Ty>>(Data);
+	
+	
+			for (; index > -1; index--)
+				temp = temp->Next;
+	
+			newnode->Next = temp->Next->Next;
+			temp->Next = newnode;
 		}
-		
-		auto temp = First;
-		auto newnode = std::make_shared<Node<Ty>>(Data);
-
-
-		for (; index > -1; index--)
-			temp = temp->Next;
-
-		newnode->Next = temp->Next->Next;
-		temp->Next = newnode;
-
 
 	}//	end function
 	
 	void Delete(const Ty& data) {
 
-		if (Empty())
+		if (isEmpty())
 			return;
 
 
@@ -114,6 +121,7 @@ public:
 		
 		}//	end else
 
+		List_size++;
 	}//	end function
 
 	void Print() {
@@ -129,7 +137,7 @@ public:
 	}//	end function
 
 private:
-	bool Empty()const {
+	bool isEmpty()const {
 		return (List_size == 0) ? true : false;
 	}
 
