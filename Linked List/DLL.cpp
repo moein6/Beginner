@@ -56,9 +56,9 @@ public:
 		else
 		{
 
-			last->next = newnode;
-			newnode->prev = last;
-			last = newnode;
+			last->next = std::move(newnode);
+			newnode->prev = std::move(last);
+			last = std::move(newnode);
 		}//	end else
 
 
@@ -70,12 +70,11 @@ public:
 		auto newnode = std::make_shared<Node<Ty>>(newData);
 
 		if (first == nullptr)
-			first = last = newnode;
+			first = last = std::move(newnode);
 		else {
 			newnode->next = first;
-			first = newnode;
+			first = std::move(newnode);
 		}
-
 
 		List_size++;
 
@@ -83,7 +82,7 @@ public:
 
 	void Delete(const Ty date) {
 
-		auto temp = first;
+		auto temp = std::move(first);
 		bool found = false;
 		if (List_size) {
 			while (temp) {
@@ -107,21 +106,8 @@ public:
 
 	}//	end function
 
-	void Print_reverse(){
-		auto reverse_Temp = last;
-
-		while (reverse_Temp)
-		{
-			std::cout << reverse_Temp->m_data << ' ';
-			reverse_Temp = reverse_Temp->prev;
-		}//	end while
-
-		std::cout << '\n';
-	}//	end function
-
 	void Print() {
-		auto temp = first;
-
+		auto temp = std::move(first);
 
 		while (temp) {
 
@@ -153,18 +139,15 @@ public:
 			return;
 		}
 
-
-
-		
-		auto temp = first;
+		auto temp = std::move(first);
 
 		for (auto i = 0; i < index; i++)
 			temp = temp->next;
 
-		temp->next->prev = newnode;
+		temp->next->prev = std::move(newnode);
 		newnode->next = temp->next;
-		temp->next = newnode;
-		newnode->prev = temp;
+		temp->next = std::move(newnode);
+		newnode->prev = std::move(temp);
 	}//	end function
 
 };//	end class
