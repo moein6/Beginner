@@ -1,11 +1,9 @@
 #include <iostream>
 #include <vector>
-#include <iomanip>
 #include <format>
 #include <algorithm>
 #include <fstream>
 #include <string>
-#include <map>
 #include <array>
 
 
@@ -20,7 +18,6 @@ using vector2D = std::vector<std::vector<char>>;
 constexpr char X = 'X';
 constexpr char O = 'O';
 constexpr us space = 2;
-constexpr std::string_view FileName = "Players.bin";
 
 constexpr enum Endgame { Tie = false, Winner = true };
 
