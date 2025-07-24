@@ -1,0 +1,48 @@
+# ❌⭕ Tic-Tac-Toe Game (C++)
+
+A clean, console-based Tic-Tac-Toe game written in modern C++. This project uses object-oriented design and is built with clarity and modularity in mind.
+
+---
+
+## 🎮 Features
+
+- Two-player gameplay (X vs O)
+- Win detection across rows, columns, and diagonals
+- Input validation and clean board rendering
+- Fully modular with header/source separation
+
+---
+
+## 📦 Coming Soon
+
+- Player name input
+- Score tracking and saving via local database
+- Match history system
+
+---
+
+## 💻 Tech Stack
+
+- Language: C++20
+- STL: `vector`, `iostream`, `string`, `iomanip`
+- Clean OOP structure
+
+---
+
+## 🔧 Structure
+
+Tic-tac-toe/
+├── Main.cpp
+├── Game.h
+├── Game.cpp
+└── README.md
+
+
+---
+
+## 👤 Author
+
+[moein6](https://github.com/moein6)
+
+---
+
