@@ -1,37 +1,34 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <format>
+#include <algorithm>
+#include <fstream>
+#include <string>
+#include <map>
+#include <array>
 
 
-
-enum situation {
-	OFF,
-	ON
-};
+#define ClearScreen std::system("cls");
+#define PauseScreen std::system("pause");
 
 
-constexpr bool debug = situation::OFF;
-
-using vector = std::vector<std::vector<char>>;
 using us = unsigned short;
+using vector1D = std::vector<char>;
+using vector2D = std::vector<std::vector<char>>;
 
 constexpr char X = 'X';
 constexpr char O = 'O';
 constexpr us space = 2;
+constexpr std::string_view FileName = "Players.bin";
 
-
-enum  Endgame
-{
-	Winner = true,
-	Tie = false
-};
-
+constexpr enum Endgame { Tie = false, Winner = true };
 
 class  Game
 {
 public:
 	Game(const size_t newsize);
-
+	
 	Game();
 
 	~Game();
@@ -41,23 +38,36 @@ public:
 
 
 private:
-	bool Row_check();
+	bool Diagonal();
 
-	bool Column_check();
+	bool Row();
 
-	bool Diameter();
-
+	bool Check_vector(const vector1D& vec);
 
 	void Print()const;
 
-	void Initialaze(const size_t newSize);
-
-	void Solve(const us player);
-
 	bool empty_spot();
+
+	vector1D coltorow_Vector(const us &);
+
+	bool Column();
+
+	void Play(const us&, const std::string_view & );
+	
+	void Initialize(const size_t newSize);
+
+	std::string_view Get_PlayerName(const unsigned short & , const bool &hasName = false)const;
+
+protected:
+	std::array<std::string, 2> playerNameArr;
+
 private:
 
-	vector m_Table;
-	size_t m_Size;
-	bool GameResul;
+	vector2D m_Table;
+	size_t m_Size = 0;
+	bool GameResul = false;
+
+
 };
+
+
