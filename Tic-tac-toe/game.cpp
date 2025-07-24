@@ -4,7 +4,7 @@ Game::Game(const size_t newsize) {
 	GameResul = Endgame::Tie;
 
 	if (newsize > 2 and newsize < 10) [[likely]]
-		Initialaze(newsize);
+		Initialize(newsize);
 	else {
 		std::cerr << "[ERROR] : Wrong size size is setted to 3\n\a";
 		m_Size = 3;
@@ -13,8 +13,8 @@ Game::Game(const size_t newsize) {
 
 Game::Game() {
 	size_t size;
-	std::cout << "Enter Table size : ";
 
+	std::cout << "Set Game size : ";
 	std::cin >> size;
 
 	if (size > 2 and size < 10)
@@ -24,132 +24,152 @@ Game::Game() {
 		m_Size = 3;
 	}
 
-	Initialaze(m_Size);
+	Initialize(m_Size);
 }
 
 Game::~Game() {
-	if (GameResul)
-		std::cout << "Game Ended well\n";
-	else
-		std::cout << "Game did not ended\n";
 }
-
-
 
 void Game::Run() {
 
-	us player = 0;
+	us turn = 1, choice;
+	bool HasName = false;
+	std::string playername;
+
+	std::cout << "1 - Sign in \n2 - Ghost\n_> ";
+	std::cin >> choice;
+
+	
+	if (choice == 1) {
+		//	send to database and recive names (this code will be added in next update)
+		//	HasName = true;
+	}
+
 
 	do {
-
+		ClearScreen
 		Print();
+		
+		playername = Get_PlayerName(turn, HasName);
 
 
-		if (Row_check() or Column_check() or Diameter()) {
+		if (Row() or Column() or Diagonal()) {
 			GameResul = Endgame::Winner;
 			break;
 		}
+		
 
-		Solve(++player);
+		Play(turn, playername.data());
 
-		std::system("pause");
-		std::system("cls");
+		turn++;
+
+		if (turn > 2)
+			turn = 1;
+
+		PauseScreen
 
 	} while (empty_spot());
 
-	if (Endgame::Winner)
-		std::cout << "Player" << (player % 2 ? " two " : " one ") << " is WINNER\n";
-	else
+	if (GameResul == Endgame::Winner) {
+		constexpr auto fmt = "Player : {:<10} Win\n";
+		std::cout << std::format(fmt, playername);
+	}
+	else 
 		std::cout << "TIE\n";
-
-
-	Print();
-
-
 }
 
+bool Game::Check_vector(const vector1D& vec) {
 
-bool Game::Row_check() {
+	return (std::all_of(vec.begin(), vec.end(), [](const char& ch) { return ch == O; })
+		or
+		std::all_of(vec.begin(), vec.end(), [](const char& ch) {return ch == X; }));
+}
 
-	bool foundinner = true;
+bool Game::Row() {
 
-	for (auto v : m_Table) {
-
-		char prev = v.at(0);
-
-		for (auto ch : v)
-			if (ch == '-' or prev != ch)
-				foundinner = false;
-			else
-				prev = ch;
-
-
-
-		if (foundinner)
+	for (auto r : m_Table) {
+		
+		if (Check_vector(r))
 			return true;
 	}//	end for
 
 	return false;
-}
 
-bool Game::Column_check() {
+}//	end function
+
+bool Game::Column() {
 
 
 	for (us row = 0; row < m_Size ; row++) {
-
-		bool found = true;
-
-		for (us col = 0; col < m_Size - 1; col++)
-			if (m_Table.at(col).at(row) != m_Table.at(col + 1).at(row) or m_Table.at(col).at(row) == '-')
-				found = false;
-
-		if (found)
-			return found;
-	}
+		//	convert a column to a row vector than check the vector
+		if (Check_vector(coltorow_Vector(row)))
+			return true;
+	}//	end for
 
 	return false;
+}//	function
+
+bool Game::Diagonal() {
+	
+	vector1D vec ;
+
+	for (auto i = 0; i < m_Size; i++)
+		vec.push_back(m_Table.at(i).at(i));
+
+	if (Check_vector(vec))
+		return true;
+
+
+	vec.clear();
+
+	for (auto i = 0; i < m_Size; i++)
+		vec.push_back(m_Table.at(i).at(m_Size - 1 - i));
+
+
+	if (Check_vector(vec))
+		return true;
+
+	return false;
+
 }
 
-bool Game::Diameter() {
-	bool good = true;
+vector1D Game::coltorow_Vector(const us& col) {
+	//	 this function copys a column from main table and makes it row vector
 
-	for (us i = 0; i < m_Size - 1; i++)
-		if (m_Table.at(i).at(i) != m_Table.at(i + 1).at(i + 1) or m_Table.at(i).at(i) == '-')
-			good = false;
+	vector1D vec;
 
-	if (good)
-		return good;
+	for (auto i = 0; i < m_Size; i++)
+		vec.push_back(m_Table.at(i).at(col));
 
-	//	the other Diameter of table
-	for (us i = 0; i < m_Size - 1; i++)
-		for (short j = m_Size - 1; j >= 0; j--)
-			if (m_Table.at(i).at(j) == '-' or m_Table.at(i).at(j) != m_Table.at(i + 1).at(j))
-				good = false;
-
-	return good;
+	return vec;
+		
 }
-
 
 void Game::Print()const {
 
-	std::cout << std::setw(space + 1) << std::left << ' ';
+	constexpr auto fmt1 = "{:<3}";
+	constexpr auto fmt2 = "{:>2}";
+	constexpr auto fmt3 = "\n{:<3} ";
+	constexpr auto fmt4 = "{:<2}|";
+	constexpr auto fmt5 = "{:>2}";
+	
+	std::cout << std::format(fmt1, ' ');
+
 	for (auto i = 0; i < m_Size; i++)
-		std::cout << std::setw(space) << std::right << i + 1;
+		std::cout << std::format(fmt2, i + 1);
+		
 
-	std::cout << '\n' << std::setw(space + 1) << std::left << ' ';
-	for (unsigned short i = 0; i < m_Size * space; i++)
-		std::cout << '=';
-	std::cout << '\n';
+	std::cout << std::format(fmt3, ' ');
+	
+	std::cout << std::string(m_Size * space, '-') << '\n';
 
-
-
-
+	
 	for (auto i = 0; i < m_Size; i++) {
-
-		std::cout << std::setw(2) << std::left << i + 1 << '|';
+		std::cout << std::format(fmt4, i + 1);
+		
 
 		for (auto elem : m_Table.at(i))
-			std::cout << std::setw(space) << std::right << elem;
+			std::cout << std::format(fmt5, elem);
 
 		std::cout << '\n';
 
@@ -157,43 +177,36 @@ void Game::Print()const {
 
 	std::cout << '\n';
 
+}//	END FUNCTION
 
-
-
-}
-
-void Game::Initialaze(const size_t newSize) {
-
+void Game::Initialize(const size_t newSize) {
+		
 	m_Size = newSize;
 	m_Table.resize(m_Size);
 
-	for (us i = 0; i < m_Size; i++) {
-
-		std::vector<char> temp(m_Size, '-');
-		m_Table.at(i) = std::move(temp);
-
-	}//	end for
-
-
-
+	for (us i = 0; i < m_Size; i++)
+		m_Table.at(i) = std::move(vector1D(m_Size, '-'));
 
 }//	end function
 
-void Game::Solve(const us player) {
+void Game::Play(const us &Turn,const std::string_view &PlayerName) {
 
 	us row;
 	us col;
+	auto ch = ' ';
+
+	std::cout << PlayerName << " : \n";
+
+	if (Turn == 1)
+		ch = O;
+	else
+		ch = X;
 
 
-	auto p = (player % 2 == 0);
-	char ch = p ? X : O;
-
-	std::cout << "Player " << (p ? " two " : " one ") << '\n';
-
-	std::cout << "Enter row : ";
+	std::cout << "Row : ";
 	std::cin >> row;
 
-	std::cout << "col : ";
+	std::cout << "Col : ";
 	std::cin >> col;
 
 	if (row > m_Size or col > m_Size) {
@@ -212,10 +225,21 @@ void Game::Solve(const us player) {
 }
 
 bool Game::empty_spot() {
+	
 	for (auto v : m_Table)
-		for (auto ch : v)
-			if (ch == '-')
-				return true;
-
+		if (std::any_of(v.begin(), v.end(), [](const char& ch) { return ch == '-'; }))
+			return true;
 	return false;
+}
+
+std::string_view Game::Get_PlayerName(const unsigned short& Turn, const bool &hasName)const {
+	if (hasName)
+		return playerNameArr.at(Turn - 1);
+	else
+		switch (Turn) {
+		case 1:	return "One";
+		case 2:	return "Two";
+		}//	end switch
+
+	return "ERR";
 }
