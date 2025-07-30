@@ -55,6 +55,8 @@ private:
 
 	std::string_view Get_PlayerName(const unsigned short & , const bool &hasName = false)const;
 
+	void Set_M_Size(const size_t &);
+
 protected:
 	std::array<std::string, 2> playerNameArr;
 
