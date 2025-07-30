@@ -3,12 +3,7 @@
 Game::Game(const size_t newsize) {
 	GameResul = Endgame::Tie;
 
-	if (newsize > 2 and newsize < 10) [[likely]]
-		Initialize(newsize);
-	else {
-		std::cerr << "[ERROR] : Wrong size size is setted to 3\n\a";
-		m_Size = 3;
-	}
+	Set_M_Size(size);
 }
 
 Game::Game() {
@@ -17,12 +12,7 @@ Game::Game() {
 	std::cout << "Set Game size : ";
 	std::cin >> size;
 
-	if (size > 2 and size < 10)
-		m_Size = size;
-	else {
-		std::cerr << "[ERROR] : Wrong size! size is setted as 3\n\a";
-		m_Size = 3;
-	}
+	Set_M_Size(size);
 
 	Initialize(m_Size);
 }
@@ -193,15 +183,9 @@ void Game::Play(const us &Turn,const std::string_view &PlayerName) {
 
 	us row;
 	us col;
-	auto ch = ' ';
+	auto ch = (Trun == 1 ) ? O : X;
 
 	std::cout << PlayerName << " : \n";
-
-	if (Turn == 1)
-		ch = O;
-	else
-		ch = X;
-
 
 	std::cout << "Row : ";
 	std::cin >> row;
@@ -224,12 +208,26 @@ void Game::Play(const us &Turn,const std::string_view &PlayerName) {
 
 }
 
+
+void Game::Set_M_Size(const size_t &newsize){
+	if (newsize > 2 and newsize < 10)
+		m_Size = size;
+	else {
+		std::cerr << "[ERROR] : Wrong size! set to 3\n\a";
+		m_Size = 3;
+	}
+}
+
 bool Game::empty_spot() {
+	bool found = false;
 	
 	for (auto v : m_Table)
-		if (std::any_of(v.begin(), v.end(), [](const char& ch) { return ch == '-'; }))
-			return true;
-	return false;
+		if (std::any_of(v.begin(), v.end(), [](const char& ch) { return ch == '-'; })){
+			found = true;
+			break;
+		}
+			
+	return found;
 }
 
 std::string_view Game::Get_PlayerName(const unsigned short& Turn, const bool &hasName)const {
